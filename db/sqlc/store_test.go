@@ -2,6 +2,7 @@ package db
 
 import (
 	"context"
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -21,8 +22,10 @@ func TestTransferTx(t *testing.T) {
 	results := make(chan TransferTxResult)
 
 	for i := 0; i < n; i++ {
+		txName := fmt.Sprintf("tx %d", i+1)
 		go func() {
-			result, err := store.TransferTx(context.Background(), TransferTxParams{
+			ctx := context.WithValue(context.Background(), txKey, txName)
+			result, err := store.TransferTx(ctx, TransferTxParams{
 				FromAccountID: from_account.ID,
 				ToAccountID:   to_account.ID,
 				Amount:        amount,
@@ -34,6 +37,7 @@ func TestTransferTx(t *testing.T) {
 	}
 
 	// check results
+	existed := make(map[int]bool)
 	for i := 0; i < n; i++ {
 		err := <-errs
 		require.NoError(t, err)
@@ -75,6 +79,35 @@ func TestTransferTx(t *testing.T) {
 		require.NoError(t, err)
 
 		// TODO: Check account balance
+		// check accounts
+		fromAccount := result.FomAccount
+		require.NotEmpty(t, fromAccount)
+		require.Equal(t, from_account.ID, fromAccount.ID)
 
+		toAccount := result.ToAccount
+		require.NotEmpty(t, toAccount)
+		require.Equal(t, to_account.ID, toAccount.ID)
+
+		// check balances
+		diff1 := from_account.Balance - fromAccount.Balance
+		diff2 := toAccount.Balance - to_account.Balance
+		require.Equal(t, diff1, diff2)
+		require.True(t, diff1 > 0)
+		require.True(t, diff1%amount == 0) // 1 * amount, 2 * amount, 3 * amount, ..., n * amount
+
+		k := int(diff1 / amount)
+		require.True(t, k >= 1 && k <= n)
+		require.NotContains(t, existed, k)
+		existed[k] = true
 	}
+
+	// check the final updated balance
+	updatedAccount1, err := testQuries.GetAccountForUpdate(context.Background(), from_account.ID)
+	require.NoError(t, err)
+
+	updatedAccount2, err := testQuries.GetAccountForUpdate(context.Background(), to_account.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, from_account.Balance-int64(n)*amount, updatedAccount1.Balance)
+	require.Equal(t, to_account.Balance+int64(n)*amount, updatedAccount2.Balance)
 }
