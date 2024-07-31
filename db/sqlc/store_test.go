@@ -109,3 +109,53 @@ func TestTransferTx(t *testing.T) {
 	require.Equal(t, from_account.Balance-int64(n)*amount, updatedAccount1.Balance)
 	require.Equal(t, to_account.Balance+int64(n)*amount, updatedAccount2.Balance)
 }
+
+func TestTransferTxDeadlock(t *testing.T) {
+	store := NewStore(testDB)
+
+	from_account := createRandomAccount(t)
+	to_account := createRandomAccount(t)
+
+	// running concurrent transactions
+	n := 10
+	amount := int64(50)
+	errs := make(chan error)
+
+	for i := 0; i < n; i++ {
+		fromAccountIDdead := from_account.ID
+		toAccountIDdead := to_account.ID
+
+		if i%2 == 1 {
+			fromAccountIDdead = to_account.ID
+			toAccountIDdead = from_account.ID
+		}
+		go func() {
+
+			_, err := store.TransferTx(context.Background(), TransferTxParams{
+				FromAccountID: fromAccountIDdead,
+				ToAccountID:   toAccountIDdead,
+				Amount:        amount,
+			})
+
+			errs <- err
+
+		}()
+	}
+
+	// check results
+	for i := 0; i < n; i++ {
+		err := <-errs
+		require.NoError(t, err)
+
+	}
+
+	// check the final updated balance
+	updatedAccount1, err := testQuries.GetAccountForUpdate(context.Background(), from_account.ID)
+	require.NoError(t, err)
+
+	updatedAccount2, err := testQuries.GetAccountForUpdate(context.Background(), to_account.ID)
+	require.NoError(t, err)
+
+	require.Equal(t, from_account.Balance, updatedAccount1.Balance)
+	require.Equal(t, to_account.Balance, updatedAccount2.Balance)
+}
