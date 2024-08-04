@@ -1,6 +1,7 @@
 package db
 
 import (
+	"bank/util"
 	"database/sql"
 	"fmt"
 	"log"
@@ -19,8 +20,12 @@ var testQuries *Queries
 var testDB *sql.DB
 
 func TestMain(m *testing.M) {
-	var err error
-	testDB, err = sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../..")
+	if err != nil {
+		log.Fatal("Failed to load conig", err)
+	}
+
+	testDB, err = sql.Open(config.DBDriver, config.DBSource)
 	fmt.Println("Connecting to DB")
 	if err != nil {
 		log.Fatal("cannot connect to Database", err)
