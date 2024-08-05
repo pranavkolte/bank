@@ -30,7 +30,6 @@ func (Server *Server) createAccount(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
 	ctx.JSON(http.StatusOK, account)
 
 }
@@ -54,7 +53,7 @@ func (server *Server) getAccount(ctx *gin.Context) {
 			return
 		}
 
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 

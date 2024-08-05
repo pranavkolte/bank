@@ -11,11 +11,6 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const (
-	dbDriver = "postgres"
-	dbSource = "postgresql://root:root@localhost:5432/bank?sslmode=disable"
-)
-
 var testQuries *Queries
 var testDB *sql.DB
 
@@ -38,7 +33,12 @@ func TestMain(m *testing.M) {
 }
 
 func TestDBConnection(t *testing.T) {
-	conn, err := sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../..")
+	if err != nil {
+		log.Fatal("Failed to load conig", err)
+	}
+
+	conn, err := sql.Open(config.DBDriver, config.DBSource)
 	if err != nil {
 		t.Fatalf("failed to open database connection: %v", err)
 	}
