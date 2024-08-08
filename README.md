@@ -3,19 +3,22 @@
 ## Setup
 
 ### make
-run → ```powershell
+run → 
+```powershell
 sudo apt install make
 ```
 
 ### sqlc
-run → ```powershell
+run → 
+```powershell
 sudo apt install sqlc
 ```
 
 ### Docker
 - Install docker desktop
 - navigate to download folder
-- run → ```powershell
+- run → 
+```powershell
 Start-Process "Docker Desktop Installer.exe" -Verb RunAs -Wait -ArgumentList "install --installation-dir=C:\Docker\"
 ```
 
