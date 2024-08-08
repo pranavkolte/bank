@@ -3,15 +3,21 @@
 ## Setup
 
 ### make
-run → `sudo apt install make`
+run → ```powershell
+sudo apt install make
+```
 
 ### sqlc
-run → `sudo apt install sqlc`
+run → ```powershell
+sudo apt install sqlc
+```
 
 ### Docker
 - Install docker desktop
 - navigate to download folder
-- run → `Start-Process "Docker Desktop Installer.exe" -Verb RunAs -Wait -ArgumentList "install --installation-dir=C:\Docker\"`
+- run → ```powershell
+Start-Process "Docker Desktop Installer.exe" -Verb RunAs -Wait -ArgumentList "install --installation-dir=C:\Docker\"
+```
 
 ### PostgreSQL Image
 To manage the PostgreSQL image using Docker, follow these steps:
@@ -32,16 +38,16 @@ To manage the PostgreSQL image using Docker, follow these steps:
 
 3. **Connect to the database**
    - Command:
-     ```
+     ```powershell
      docker exec -it go-bank psql -U root
      ```
    You can copy this command and paste it into your terminal.
 
 ### DATABASE MIGRATION
-```
+```powershell
 migrate create -ext sql -dir db/migration -seq init_schema
 ```
 
-```
+```powershell
 migrate -path db/migration -database "postgresql://root:root@localhost:5432/bank?sslmode=disable" -verbose up
 ```
