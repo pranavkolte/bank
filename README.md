@@ -38,6 +38,10 @@ To manage the PostgreSQL image using Docker, follow these steps:
    You can copy this command and paste it into your terminal.
 
 ### DATABASE MIGRATION
-`migrate create -ext sql -dir db/migration -seq init_schema`
+```
+migrate create -ext sql -dir db/migration -seq init_schema
+```
 
-`migrate -path db/migration -database "postgresql://root:root@localhost:5432/bank?sslmode=disable" -verbose up`
+```
+migrate -path db/migration -database "postgresql://root:root@localhost:5432/bank?sslmode=disable" -verbose up
+```
