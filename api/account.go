@@ -24,14 +24,12 @@ func (Server *Server) createAccount(ctx *gin.Context) {
 		Currency: req.Currency,
 		Balance:  0,
 	}
-
 	account, err := Server.store.CreateAccount(ctx, arg)
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 	ctx.JSON(http.StatusOK, account)
-
 }
 
 type getAccountRequest struct {
@@ -58,7 +56,6 @@ func (server *Server) getAccount(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, account)
-
 }
 
 type getAccountsRequest struct {
@@ -83,6 +80,5 @@ func (server *Server) getAccounts(ctx *gin.Context) {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
-
 	ctx.JSON(http.StatusOK, accounts)
 }
