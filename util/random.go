@@ -49,3 +49,7 @@ func RandomCurrency() string {
 	currencies := []string{USD, INR, EUR}
 	return currencies[rand.Intn(len(currencies))]
 }
+
+func RandomEmail() string {
+	return "test-" + randomString(7) + "@gmail.com"
+}
