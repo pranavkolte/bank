@@ -19,7 +19,7 @@ func RandomInt(min, max int64) int64 {
 }
 
 // generate random string with lenth of n
-func randomString(n int) string {
+func RandomString(n int) string {
 	var stringBuilder strings.Builder
 
 	k := len(alphabet)
@@ -36,7 +36,7 @@ func randomString(n int) string {
 
 // genrate random owener name
 func RandomOwner() string {
-	return "test-" + randomString(7)
+	return "test-" + RandomString(7)
 }
 
 // generate random money
@@ -51,5 +51,5 @@ func RandomCurrency() string {
 }
 
 func RandomEmail() string {
-	return "test-" + randomString(7) + "@gmail.com"
+	return "test-" + RandomString(7) + "@gmail.com"
 }
